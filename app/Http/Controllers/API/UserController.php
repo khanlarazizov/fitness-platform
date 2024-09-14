@@ -3,17 +3,21 @@
 namespace App\Http\Controllers\API;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisteredUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Lib\Interfaces\IUserRepository;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function __construct(private readonly IUserRepository $userRepository)
+    public function __construct(protected IUserRepository $userRepository)
     {
     }
 
@@ -42,8 +46,7 @@ class UserController extends Controller
 
         return ResponseHelper::success(
             message: 'User created successfully',
-            data: [UserResource::make($user), $roles
-            ],
+            data: UserResource::make($user),
             statusCode: 201);
     }
 
@@ -82,7 +85,6 @@ class UserController extends Controller
             message: 'User updated successfully',
             data: UserResource::make($user)
         );
-
     }
 
     public function destroy(int $id)
