@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Enums\UserStatusEnum;
+use App\Enums\UserGenderEnum;
 
 return new class extends Migration {
     /**
@@ -16,17 +17,19 @@ return new class extends Migration {
             $table->string('name');
             $table->string('surname');
             $table->string('slug');
+            $table->enum('gender', array_column(UserGenderEnum::cases(), 'value'));
             $table->string('email');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone_number');
             $table->enum('status', array_column(UserStatusEnum::cases(), 'value'))->default(UserStatusEnum::ACTIVE->value);
             $table->foreignId('trainer_id')->nullable()->constrained('users')->cascadeOnDelete();
-//            $table->foreignId('image_id')->nullable()->constrained('images')->cascadeOnDelete();
-//            $table->string('file')->nullable();
+            $table->integer('weight')->nullable();
+            $table->integer('height')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
-            $table->unique(['email', 'slug', 'deleted_at']);
+            $table->unique(['slug', 'email', 'phone_number', 'deleted_at']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
