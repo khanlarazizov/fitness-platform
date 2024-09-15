@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserStatusEnum;
+use App\Enums\GenderEnum;
+use App\Enums\StatusEnum;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,8 +20,26 @@ class UserSeeder extends Seeder
     {
         $users = User::factory(100)->create();
 
-        $users->each(function ($user) {
-            $user->assignRole('user');
-        });
+        $users->each(
+            fn($user) => $user->assignRole('user')
+        );
+
+        $user = User::create([
+            'name' => 'john',
+            'surname' => 'doe',
+            'email' => 'john_doe2@gmail.com',
+            'password' => Hash::make('johndoe1'),
+            'phone_number' => '+99455' . rand(1111111, 9999999),
+            'gender' => GenderEnum::MALE->value,
+            'weight' => 80,
+            'height' => 180,
+            'birth_date' => '1995-01-01',
+            'status' => StatusEnum::ACTIVE->value,
+        ]);
+
+//        $user->assignRole('user');
+//        $role = Role::findByName('user', 'api');
+//        $userPermissions = Permission::where('guard_name', 'api')->get();
+//        $role->syncPermissions($userPermissions);
     }
 }
