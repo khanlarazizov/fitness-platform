@@ -30,13 +30,16 @@ class WorkoutController extends Controller
 
     public function store(StoreWorkoutRequest $request)
     {
-        $workout = $this->workoutRepository->createWorkout($request->validated());
-        if (!$workout) {
+        try {
+            $workout = $this->workoutRepository->createWorkout($request->validated());
+        } catch (\Exception $exception) {
+            Log::error('Workout could not be created', ['error' => $exception->getMessage()]);
             return ResponseHelper::error(
                 message: 'Workout could not be created',
                 statusCode: 400
             );
         }
+
         return ResponseHelper::success(
             message: 'Workout created successfully',
             data: WorkoutResource::make($workout),
@@ -74,7 +77,10 @@ class WorkoutController extends Controller
             );
         }
 
-        return ResponseHelper::success(message: 'Workout updated successfully');
+        return ResponseHelper::success(
+            message: 'Workout updated successfully',
+            data: WorkoutResource::make($workout)
+        );
     }
 
     public function destroy(int $id)
