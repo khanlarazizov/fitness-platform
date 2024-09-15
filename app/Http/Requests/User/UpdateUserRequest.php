@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\User;
 
-use App\Enums\UserStatusEnum;
+use App\Enums\StatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -15,7 +15,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->hasRole('admin');
+        return true;
     }
 
     /**
@@ -29,15 +29,25 @@ class UpdateUserRequest extends FormRequest
             'name' => ['required', 'min:3', 'max:255', 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'surname' => ['required', 'min:3', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users', 'email')
-                    ->ignore($this->user, 'id')
-                    ->whereNull('deleted_at')
+                ->ignore($this->user, 'id')
+                ->whereNull('deleted_at')
             ],
             'password' => ['required', 'confirmed',
                 Password::min(6)
-                ->numbers()
-                ->uncompromised()],
-            'status' => ['required', new Enum(UserStatusEnum::class)],
+                    ->max(20)
+                    ->numbers()
+                    ->uncompromised()],
+            'phone_number' => [
+                'required',
+                'regex:/^(\+994|994|0)(50|51|55|60|70|77)\d{7}$/',
+                'min:9',
+                'max:15',
+                Rule::unique('users', 'phone_number')
+                    ->ignore($this->user, 'id')
+                    ->whereNull('deleted_at')],
+            'status' => ['required', new Enum(StatusEnum::class)],
             'trainer_id' => ['sometimes', 'exists:users,id'],
+            'file' => ['nullable', 'mimes:jpg,jpeg,png,txt', 'max:2048'],
         ];
     }
 }
