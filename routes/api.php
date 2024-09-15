@@ -1,31 +1,71 @@
 <?php
 
-use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\API\Admin\AdminProfileController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\PlanController;
+use App\Http\Controllers\API\Trainer\TrainerProfileController;
+use App\Http\Controllers\API\User\UserController;
+use App\Http\Controllers\API\User\UserProfileController;
+use App\Http\Controllers\API\WorkoutController;
+use App\Http\Controllers\Auth\Admin\AdminLoginController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\Trainer\TrainerLoginController;
+use App\Http\Controllers\Auth\User\RegisteredUserController;
+use App\Http\Controllers\Auth\User\UserLoginController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ImageController;
+use App\Http\Controllers\API\Trainer\TrainerController;
 
-Route::prefix('auth')->controller(AuthController::class)->group(function () {
-    Route::post('login', 'login');
-    Route::post('register', 'register');
+Route::prefix('auth')->group(function () {
+    Route::post('login', [UserLoginController::class, 'store']);
+    Route::post('logout', [UserLoginController::class, 'destroy'])->middleware('auth:sanctum');
 
-    Route::post('forgot-password', 'sendResetLinkEmail');
-    Route::post('reset-password', 'reset')->name('password.reset');
+    Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('logout', 'logout')->middleware('auth:sanctum');
-        Route::get('profile', 'profile')->middleware('auth:sanctum');
+    Route::post('forgot-password', [PasswordController::class, 'store']);
+    Route::post('reset-password', [PasswordController::class, 'update'])->name('password.reset');
+
+    Route::prefix('admin')->controller(AdminLoginController::class)->group(function () {
+        Route::post('login', 'store');
+        Route::post('logout', 'destroy')->middleware('auth:sanctum');
+    });
+
+    Route::prefix('trainer')->controller(TrainerLoginController::class)->group(function () {
+        Route::post('login', 'store');
+        Route::post('logout', 'destroy')->middleware('auth:sanctum');
     });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')
+    ->prefix('users/{user}')
+    ->controller(UserProfileController::class)
+    ->group(function () {
+        Route::get('profile', 'show');
+        Route::put('profile', 'update');
+    });
+
+Route::middleware(['auth:sanctum', 'role:admin'])
+    ->prefix('admins/{admin}')
+    ->controller(AdminProfileController::class)
+    ->group(function () {
+        Route::get('profile', 'show');
+        Route::put('profile', 'update');
+    });
+
+Route::middleware(['auth:sanctum', 'role:trainer'])
+    ->prefix('trainers/{trainer}')
+    ->controller(TrainerProfileController::class)
+    ->group(function () {
+        Route::get('profile', 'show');
+        Route::put('profile', 'update');
+    });
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('users', UserController::class);
+    Route::apiResource('trainers', TrainerController::class);
+});
 
-    Route::post('fileUpload', [ImageController::class, 'store']);
-//    Route::get('users/get-trainers', [UserController::class, 'get_trainers']);
-
-//    Route::get('users', [UserController::class, 'index']);
-//    Route::get('users/{id}', [UserController::class, 'show']);
-//    Route::put('users/{id}', [UserController::class, 'update']);
-//    Route::delete('users/{id}', [UserController::class, 'destroy']);
+Route::middleware(['auth:sanctum', 'admin_or_trainer'])->group(function () {
+    Route::apiResource('workouts', WorkoutController::class);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('plans', PlanController::class);
 });
