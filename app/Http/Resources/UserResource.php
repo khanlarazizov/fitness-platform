@@ -18,9 +18,10 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'surname' => $this->surname,
-            'gender' => $this->gender,//todo check gender
+            'gender' => $this->gender,
             'email' => $this->email,
             'phone_number' => $this->phone_number,
+            'birth_date' => $this->birth_date,
             'status' => $this->status->value,
             'weight' => $this->weight,
             'height' => $this->height,
