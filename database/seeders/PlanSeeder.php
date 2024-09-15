@@ -18,9 +18,8 @@ class PlanSeeder extends Seeder
             ->count(10)
             ->create()
             ->each(function ($plan) {
-                // For each Plan, attach random Workouts
-                $workouts = Workout::factory()->count(10)->create(); // Create 5 Workouts for each Plan
-                $plan->workouts()->attach($workouts->pluck('id')->toArray()); // Attach workouts
+                $workouts = Workout::factory()->count(10)->create();
+                $plan->workouts()->attach($workouts->pluck('id')->toArray());
             });
     }
 }
