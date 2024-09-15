@@ -7,15 +7,15 @@ use Illuminate\Support\Collection;
 
 interface IUserRepository
 {
-    public function getAllUsers();
+    public function getAllUsers(): Collection;
 
-    public function createUser(array $data): ?User;
+    public function createUser(array $data): User;
 
     public function getUserById(int $id): ?User;
 
     public function getAllTrainers();
 
-    public function updateUser(int $id, array $data);
+    public function updateUser(int $id, array $data): bool;
 
     public function deleteUser($id);
 }
