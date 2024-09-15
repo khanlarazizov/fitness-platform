@@ -32,7 +32,7 @@ class WorkoutRepository implements IWorkoutRepository
             $workout = Workout::create($data);
             $workout->image()->create(['name' => $file]);
             DB::commit();
-            return $workout;
+            return $workout->load('image', 'category');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error('Workout could not be created', ['error' => $exception->getMessage()]);
@@ -40,27 +40,29 @@ class WorkoutRepository implements IWorkoutRepository
         }
     }
 
-    public function updateWorkout(int $id, array $data): bool
+    public function updateWorkout(int $id, array $data): Workout
     {
         $workout = Workout::find($id)->load('image', 'category');
-        if (!$workout) {
-            Log::error('Workout not found');
-            throw new \Exception('Workout not found');
-        }
 
         DB::beginTransaction();
         try {
-            $file = isset($data['file']) ? UploadHelper::uploadFile($data['file']) : null;
+            $file = isset($data['file']) ? UploadHelper::updateFile($data['file'], $workout) : $workout->image->name;
+
             $workout->update($data);
-            $workout->image()->update(['name' => $file]);
+
+            if ($file) {
+                $workout->image()->update(['name' => $file]);
+            }
 
             DB::commit();
-            return $workout;
+
+            return $workout->load('image', 'category');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error('Workout could not be updated', ['error' => $exception->getMessage()]);
             throw new \Exception('Workout could not be updated');
         }
+
     }
 
     public function deleteWorkout(int $id)
@@ -70,8 +72,8 @@ class WorkoutRepository implements IWorkoutRepository
         DB::beginTransaction();
         try {
             $workout->delete();
+            UploadHelper::deleteFile($workout);
             $workout->image()->delete();
-//            $workout->plans()->detach();
 
             DB::commit();
         } catch (\Exception $exception) {
