@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Enums\UserStatusEnum;
+use App\Enums\GenderEnum;
+use App\Enums\StatusEnum;
+use App\Models\Trainer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -25,18 +27,23 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $users = User::pluck('id')->toArray();
+        $trainers = Trainer::pluck('id')->toArray();
 
         return [
             'name' => fake()->name(),
             'surname' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'email' => fake()->unique()->freeEmail(),
             'remember_token' => Str::random(10),
-            'status' => UserStatusEnum::ACTIVE->value,
-            'trainer_id' => 1,
+            'password' => static::$password ??= Hash::make('password'),
+            'gender' => fake()->randomElement(GenderEnum::cases())->value,
+            'status' => fake()->randomElement(StatusEnum::cases())->value,
+            'birth_date' => fake()->date(),
+            'phone_number' => '+99455' . rand(1111111, 9999999),
+            'trainer_id' => fake()->randomElement($trainers),
+            'weight' => fake()->numberBetween(40, 150),
+            'height' => fake()->numberBetween(130, 250),
 //            'file' => fake()->image(storage_path('images'), 50, 50)
+            'email_verified_at' => now(),
         ];
     }
 
