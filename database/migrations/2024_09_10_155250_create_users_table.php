@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\UserStatusEnum;
-use App\Enums\UserGenderEnum;
+use App\Enums\StatusEnum;
+use App\Enums\GenderEnum;
 
 return new class extends Migration {
     /**
@@ -17,15 +17,16 @@ return new class extends Migration {
             $table->string('name');
             $table->string('surname');
             $table->string('slug');
-            $table->enum('gender', array_column(UserGenderEnum::cases(), 'value'));
+            $table->enum('gender', array_column(GenderEnum::cases(), 'value'));
             $table->string('email');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone_number');
-            $table->enum('status', array_column(UserStatusEnum::cases(), 'value'))->default(UserStatusEnum::ACTIVE->value);
-            $table->foreignId('trainer_id')->nullable()->constrained('users')->cascadeOnDelete();
-            $table->integer('weight')->nullable();
-            $table->integer('height')->nullable();
+            $table->date('birth_date')->nullable();
+            $table->enum('status', array_column(StatusEnum::cases(), 'value'))->default(StatusEnum::ACTIVE->value);
+            $table->foreignId('trainer_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->integer('weight');
+            $table->integer('height');
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
