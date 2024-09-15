@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Events\UserRegistered;
 use App\Helpers\ResponseHelper;
-use App\Http\Requests\Auth\LoginUserRequest;
+use App\Http\Requests\Auth\UserLoginRequest;
 use App\Http\Requests\Auth\ProfileRequest;
-use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Http\Requests\Auth\RegisteredUserRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SentLinkRequest;
 use App\Http\Resources\UserResource;
@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function register(RegisterUserRequest $request): JsonResponse
+    public function register(RegisteredUserRequest $request): JsonResponse
     {
         $input = $request->validated();
         $input['password'] = Hash::make($request->input('password'));
@@ -48,30 +48,29 @@ class AuthController extends Controller
         );
     }
 
-    public function login(LoginUserRequest $request): JsonResponse
+    public function login(UserLoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $user = User::firstWhere('email', $request->email);
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return ResponseHelper::success(
-                message: 'User logged successfully',
-                data: [
-                    'token' => $token,
-                    'user' => new UserResource($user)
-                ]);
+        if (!Auth::attempt($credentials, $remember)) {
+            return ResponseHelper::error(
+                message: 'Unauthorized',
+                statusCode: 401
+            );
         }
+        $user = User::firstWhere('email', $request->email);
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return ResponseHelper::error(
-            message: 'Unauthorized',
-            statusCode: 401
-        );
+        return ResponseHelper::success(
+            message: 'User logged successfully',
+            data: [
+                'token' => $token,
+                'user' => new UserResource($user)
+            ]);
     }
 
-    public function logout(LoginUserRequest $request): JsonResponse
+    public function logout(UserLoginRequest $request): JsonResponse
     {
         if ($request->user()->tokens()->delete()) {
             return response()->json();
