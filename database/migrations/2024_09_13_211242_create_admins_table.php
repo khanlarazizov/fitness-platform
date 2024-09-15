@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('surname');
-            $table->string('email')->unique();
+            $table->string('slug');
+            $table->string('email');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['slug', 'email','deleted_at']);
         });
     }
 
