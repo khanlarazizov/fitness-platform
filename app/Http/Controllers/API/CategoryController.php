@@ -8,7 +8,6 @@ use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Lib\Interfaces\ICategoryRepository;
-use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
