@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Trainer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,10 @@ class PlanFactory extends Factory
      */
     public function definition(): array
     {
+        $trainers = Trainer::pluck('id')->toArray();
         return [
-            'name' => fake()->name(),
+            'name' => fake()->word(),
+            'trainer_id' => fake()->randomElement($trainers),
         ];
     }
 }
