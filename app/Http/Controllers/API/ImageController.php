@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Helpers\UploadHelper;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class ImageController extends Controller
