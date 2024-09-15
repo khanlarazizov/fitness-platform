@@ -25,6 +25,7 @@ class UpdateWorkoutRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:20',Rule::unique('workouts', 'name')->ignore($this->workout, 'id')->whereNull('deleted_at')],
             'category_id' => ['required', Rule::exists('categories', 'id')->whereNull('deleted_at')],
+            'file' => ['nullable', 'mimes:png,jpg,jpeg', 'max:2048'],
         ];
     }
 }
