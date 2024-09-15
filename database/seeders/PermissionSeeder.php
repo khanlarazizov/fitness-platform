@@ -12,15 +12,36 @@ class PermissionSeeder extends Seeder
         'index', 'store', 'show', 'update', 'destroy'
     ];
 
-    public array $controllers = [
-        'user', 'role', 'permission'
+    public array $adminControllers = [
+        'admin',
+        'user',
+        'trainer',
+        'workout',
+        'plan',
+        'category',
+        'role',
+        'permission'
+    ];
+
+    public array $trainerControllers = [
+        'workout',
+        'plan',
+        'category',
     ];
 
     public function run(): void
     {
-        foreach ($this->controllers as $controller) {
+        // Admin Permissions
+        foreach ($this->adminControllers as $controller) {
             foreach ($this->permissions as $permission) {
-                Permission::create(['name' => $controller . '-' . $permission, 'guard_name' => 'api']);
+                Permission::create(['name' => $controller . '-' . $permission, 'guard_name' => 'admin-api']);
+            }
+        }
+
+        // TrainerController Permissions
+        foreach ($this->trainerControllers as $controller) {
+            foreach ($this->permissions as $permission) {
+                Permission::create(['name' => $controller . '-' . $permission, 'guard_name' => 'trainer-api']);
             }
         }
     }
