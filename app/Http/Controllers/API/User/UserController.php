@@ -1,19 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\User;
 
 use App\Helpers\ResponseHelper;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisteredUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Lib\Interfaces\IUserRepository;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
