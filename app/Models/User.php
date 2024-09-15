@@ -3,11 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Enums\UserStatusEnum;
+use App\Enums\GenderEnum;
+use App\Enums\StatusEnum;
+use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,7 +56,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'status' => UserStatusEnum::class,
+            'status' => StatusEnum::class,
+            'gender' => GenderEnum::class,
         ];
     }
 
@@ -61,17 +66,23 @@ class User extends Authenticatable
         return [
             'slug' => [
                 'source' => ['name', 'surname'],
+                'onUpdate' => true,
             ]
         ];
     }
 
+//    public function getAgeAttribute()
+//    {
+//        return Carbon::parse($this->birth_date)->age;
+//    }
+
     public function trainer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'trainer_id');
+        return $this->belongsTo(Trainer::class);
     }
 
-    public function image(): HasOne
+    public function image(): MorphOne
     {
-        return $this->hasOne(Image::class);
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
