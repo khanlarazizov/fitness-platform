@@ -13,7 +13,7 @@ interface IWorkoutRepository
 
     public function createWorkout(array $data): Workout;
 
-    public function updateWorkout(int $id, array $data): bool;
+    public function updateWorkout(int $id, array $data): Workout;
 
     public function deleteWorkout(int $id);
 }
