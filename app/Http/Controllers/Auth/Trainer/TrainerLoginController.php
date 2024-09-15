@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth\Trainer;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\TrainerLoginRequest;
-use App\Models\Admin;
 use App\Models\Trainer;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +25,7 @@ class TrainerLoginController extends Controller
         $token = $trainer->createToken('auth_token')->plainTextToken;
 
         return ResponseHelper::success(
-            message: 'Trainer logged successfully',
+            message: 'TrainerController logged successfully',
             data: [
                 'token' => $token,
                 'user' => [
@@ -40,7 +39,7 @@ class TrainerLoginController extends Controller
     {
         $request->user()->tokens()->delete();
         return ResponseHelper::success(
-            message: 'Trainer logged out successfully',
+            message: 'TrainerController logged out successfully',
             statusCode: 204
         );
     }
