@@ -18,7 +18,7 @@ class PlanRepository implements IPlanRepository
 
     public function getPlanById(int $id): ?Plan
     {
-        return Plan::find($id)->load('workouts');
+        return Plan::find($id)->load('workouts', 'trainer');
     }
 
     public function createPlan(array $data): Plan
@@ -30,7 +30,7 @@ class PlanRepository implements IPlanRepository
             $plan->workouts()->attach($data['workouts']);
 
             DB::commit();
-            return $plan->load('workouts');
+            return $plan->load('workouts', 'trainer');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error('Plan could not be created', ['error' => $exception->getMessage()]);
@@ -41,8 +41,22 @@ class PlanRepository implements IPlanRepository
     public function updatePlan(int $id, array $data): Plan
     {
         $plan = Plan::find($id);
-        $plan->update($data);
-        return $plan->load('workouts');
+//        $plan->update($data);
+//        return $plan->load('workouts');
+
+        DB::beginTransaction();
+        try {
+            $data['trainer_id'] = auth()->id();
+            $plan->update($data);
+            $plan->workouts()->sync($data['workouts']);
+
+            DB::commit();
+            return $plan->load('workouts','trainer');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error('Plan could not be created', ['error' => $exception->getMessage()]);
+            throw new \Exception('Plan could not be created');
+        }
     }
 
     public function deletePlan(int $id)
@@ -51,8 +65,9 @@ class PlanRepository implements IPlanRepository
 
         DB::beginTransaction();
         try {
-//            $plan->workouts()->detach();//TODO check it
             $plan->delete();
+            $plan->workouts()->detach();
+
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
