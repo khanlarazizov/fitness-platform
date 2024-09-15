@@ -44,6 +44,14 @@ return [
             'driver' => 'sanctum',
             'provider' => 'users',
         ],
+        'admin-api' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+        'trainer-api' => [
+            'driver' => 'session',
+            'provider' => 'trainers',
+        ]
     ],
 
     /*
@@ -67,6 +75,14 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'trainers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Trainer::class,
         ],
 
         // 'users' => [
