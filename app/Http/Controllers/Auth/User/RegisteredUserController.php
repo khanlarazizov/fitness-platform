@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth\User;
 
 use App\Events\UserRegistered;
 use App\Helpers\ResponseHelper;
@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisteredUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class RegisteredUserController extends Controller
@@ -28,7 +27,6 @@ class RegisteredUserController extends Controller
             );
 
         event(new UserRegistered($user));
-//        Notification::send($user, new WelcomeNewUser($user));
 
         return ResponseHelper::success(
             message: 'User registered succesfully',
