@@ -15,6 +15,8 @@ use App\Http\Controllers\Auth\User\UserLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Trainer\TrainerController;
 
+
+Route::get('/',[UserController::class,'index']);
 Route::prefix('auth')->group(function () {
     Route::post('login', [UserLoginController::class, 'store']);
     Route::post('logout', [UserLoginController::class, 'destroy'])->middleware('auth:sanctum');
