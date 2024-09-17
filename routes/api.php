@@ -14,9 +14,9 @@ use App\Http\Controllers\Auth\User\RegisteredUserController;
 use App\Http\Controllers\Auth\User\UserLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Trainer\TrainerController;
+use App\Http\Controllers\API\Admin\AdminController;
 
-
-Route::get('/',[UserController::class,'index']);
+Route::get('/', [UserController::class, 'index']);
 Route::prefix('auth')->group(function () {
     Route::post('login', [UserLoginController::class, 'store']);
     Route::post('logout', [UserLoginController::class, 'destroy'])->middleware('auth:sanctum');
@@ -45,14 +45,6 @@ Route::middleware('auth:sanctum')
         Route::put('profile', 'update');
     });
 
-Route::middleware(['auth:sanctum', 'role:admin'])
-    ->prefix('admins/{admin}')
-    ->controller(AdminProfileController::class)
-    ->group(function () {
-        Route::get('profile', 'show');
-        Route::put('profile', 'update');
-    });
-
 Route::middleware(['auth:sanctum', 'role:trainer'])
     ->prefix('trainers/{trainer}')
     ->controller(TrainerProfileController::class)
@@ -64,6 +56,13 @@ Route::middleware(['auth:sanctum', 'role:trainer'])
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('trainers', TrainerController::class);
+    Route::apiResource('admins', AdminController::class);
+    Route::prefix('admins/{admin}/profile')
+        ->controller(AdminProfileController::class)
+        ->group(function () {
+            Route::get('/', 'show');
+            Route::put('/', 'update');
+        });
 });
 
 Route::middleware(['auth:sanctum', 'admin_or_trainer'])->group(function () {
