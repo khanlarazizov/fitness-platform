@@ -13,8 +13,6 @@ interface IUserRepository
 
     public function getUserById(int $id): ?User;
 
-    public function getAllTrainers();
-
     public function updateUser(int $id, array $data): bool;
 
     public function deleteUser($id);
