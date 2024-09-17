@@ -45,11 +45,6 @@ class UserRepository implements IUserRepository
         return User::find($id)->load('trainer');
     }
 
-    public function getAllTrainers()
-    {
-        return User::whereNotNull('trainer_id')->get();
-    }
-
     public function updateUser(int $id, array $data): bool
     {
         $user = User::find($id)->load('trainer');
@@ -90,7 +85,6 @@ class UserRepository implements IUserRepository
 
         DB::beginTransaction();
         try {
-
             $user->delete();
             $user->image()->delete();
             DB::commit();
