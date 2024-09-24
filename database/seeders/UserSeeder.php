@@ -37,9 +37,6 @@ class UserSeeder extends Seeder
             'status' => StatusEnum::ACTIVE->value,
         ]);
 
-//        $user->assignRole('user');
-//        $role = Role::findByName('user', 'api');
-//        $userPermissions = Permission::where('guard_name', 'api')->get();
-//        $role->syncPermissions($userPermissions);
+        $user->assignRole('user');
     }
 }
