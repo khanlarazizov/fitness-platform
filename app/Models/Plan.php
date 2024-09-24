@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,10 @@ class Plan extends Model
         ];
     }
 
+    protected $casts = [
+        'status' => StatusEnum::class
+    ];
+
     public function workouts(): BelongsToMany
     {
         return $this->belongsToMany(Workout::class, 'plan_workout');
@@ -32,6 +37,11 @@ class Plan extends Model
 
     public function trainer(): BelongsTo
     {
-        return $this->belongsTo(Trainer::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'plan_user');
     }
 }
