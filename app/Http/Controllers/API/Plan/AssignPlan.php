@@ -9,13 +9,8 @@ use App\Models\Plan;
 
 class AssignPlan extends Controller
 {
-    public function store(int $id)
+    public function store(Plan $plan)
     {
-        $plan = Plan::find($id);
-        if (!$plan) {
-            return ResponseHelper::error(message: 'Plan could not found');
-        }
-
         $user = auth()->user();
         $user->plans()->attach($plan);
 
@@ -25,13 +20,8 @@ class AssignPlan extends Controller
         );
     }
 
-    public function destroy(int $id)
+    public function destroy(Plan $plan)
     {
-        $plan = Plan::find($id);
-        if (!$plan) {
-            return ResponseHelper::error(message: 'Plan could not found');
-        }
-
         $user = auth()->user();
         $user->plans()->detach($plan);
 
