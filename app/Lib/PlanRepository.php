@@ -13,7 +13,9 @@ class PlanRepository implements IPlanRepository
 
     public function getAllPlans(): Collection
     {
-        return Plan::with('workouts', 'trainer')->get();
+        return Plan::with('workouts', 'trainer')
+            ->withCount('users','workouts')
+            ->get();
     }
 
     public function getPlanById(int $id): ?Plan
