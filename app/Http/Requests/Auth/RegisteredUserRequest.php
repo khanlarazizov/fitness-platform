@@ -49,15 +49,25 @@ class RegisteredUserRequest extends FormRequest
                 'max:15',
                 Rule::unique('users', 'phone_number')
                     ->whereNull('deleted_at')],
-            'password' => ['required', 'confirmed', Password::min(6)
-                ->max(20)
-                ->numbers()
-                ->uncompromised()],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(6)
+                    ->max(20)
+                    ->numbers()
+            ],
             'status' => ['required', new Enum(StatusEnum::class)],
-            'trainer_id' => ['sometimes', 'exists:users,id'],
+            'trainer_id' => ['sometimes', Rule::exists('users', 'id')],
             'weight' => ['required', 'numeric'],
             'height' => ['required', 'numeric'],
             'file' => ['nullable', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
+
+//    public function attributes(): array
+//    {
+//        return [
+//            'trainer_id' => 'Trainer',
+//        ];
+//    }
 }
