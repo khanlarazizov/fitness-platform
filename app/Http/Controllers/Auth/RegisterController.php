@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth\User;
+namespace App\Http\Controllers\Auth;
 
 use App\Events\UserRegistered;
 use App\Helpers\ResponseHelper;
@@ -10,7 +10,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-class RegisteredUserController extends Controller
+class RegisterController extends Controller
 {
     public function store(RegisteredUserRequest $request)
     {
