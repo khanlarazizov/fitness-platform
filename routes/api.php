@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\Plan\AssignPlan;
+use App\Http\Controllers\API\Plan\AssignPlanByTrainer;
 use App\Http\Controllers\API\Plan\PlanController;
 use App\Http\Controllers\API\User\UserController;
 use App\Http\Controllers\API\User\UserProfileController;
@@ -10,7 +11,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\AssignPlanByTrainer;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [UserController::class, 'index']);
@@ -44,10 +44,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('cancel-plan/{plan}', [AssignPlan::class, 'destroy']);
 
     Route::middleware('role:trainer')
-        ->prefix('assign-plan-by-trainer/{plan}')
         ->controller(AssignPlanByTrainer::class)
         ->group(function () {
-            Route::post('/', 'store');
-            Route::delete('/', 'destroy');
+            Route::post('assign-plan-by-trainer/{plan}', 'store');
+            Route::delete('cancel-plan-by-trainer/{plan}', 'destroy');
         });
 });
