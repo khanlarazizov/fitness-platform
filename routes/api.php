@@ -43,6 +43,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('assign-plan/{plan}', [AssignPlan::class, 'store']);
     Route::delete('cancel-plan/{plan}', [AssignPlan::class, 'destroy']);
 
-    Route::post('assign-plan-by-trainer/{plan}', [AssignPlanByTrainer::class, 'store']);
-    Route::delete('cancel-plan-by-trainer/{plan}', [AssignPlanByTrainer::class, 'destroy']);
+    Route::middleware('role:trainer')
+        ->prefix('assign-plan-by-trainer/{plan}')
+        ->controller(AssignPlanByTrainer::class)
+        ->group(function () {
+            Route::post('/', 'store');
+            Route::delete('/', 'destroy');
+        });
 });
