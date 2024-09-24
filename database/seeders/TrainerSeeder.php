@@ -35,24 +35,16 @@ class TrainerSeeder extends Seeder
             fn($trainer) => $trainer->assignRole('trainer')
         );
 
-//        $trainer = User::create([
-//            'name' => 'trainer',
-//            'surname' => 'trainer',
-//            'email' => 'trainer@gmail.com',
-//            'password' => Hash::make('trainertrainer'),
-//            'phone_number' => '+994555555555',
-//            'gender' => GenderEnum::MALE->value,
-//            'birth_date' => '1990-01-01',
-//            'status' => StatusEnum::ACTIVE->value,
-//        ]);
-
-//        $trainer->assignRole('trainer');
-//        $role = Role::find(2);
-//        $permissions = Permission::whereIn('name',
-//            [
-//                'trainer-*',
-//            ]
-//        )->get();
-//        $role->syncPermissions($permissions);
+        $trainer2 = User::create([
+            'name' => 'trainer',
+            'surname' => 'trainer',
+            'email' => 'trainer@gmail.com',
+            'password' => Hash::make('trainertrainer'),
+            'phone_number' => '+994555555555',
+            'gender' => GenderEnum::MALE->value,
+            'birth_date' => '1990-01-01',
+            'status' => StatusEnum::ACTIVE->value,
+        ]);
+        $trainer2->assignRole('trainer');
     }
 }
