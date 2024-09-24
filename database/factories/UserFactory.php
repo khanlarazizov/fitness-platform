@@ -27,7 +27,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $trainers = Trainer::pluck('id')->toArray();
+        $trainers = User::query()->trainer()->pluck('id')->toArray();
 
         return [
             'name' => fake()->name(),
@@ -44,6 +44,7 @@ class UserFactory extends Factory
             'height' => fake()->numberBetween(130, 250),
 //            'file' => fake()->image(storage_path('images'), 50, 50)
             'email_verified_at' => now(),
+            'about' => fake()->text(),
         ];
     }
 
