@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function __construct(protected IUserRepository $userRepository)
-    {
-    }
+    public function __construct(
+        protected IUserRepository $userRepository
+    ){}
 
     public function index()
     {
