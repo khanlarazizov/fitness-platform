@@ -17,7 +17,8 @@ class PlanResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'workouts' => WorkoutResource::collection($this->whenLoaded('workouts'))
+            'workouts' => WorkoutResource::collection($this->whenLoaded('workouts')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
         ];
     }
 }
