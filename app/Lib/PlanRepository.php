@@ -13,7 +13,7 @@ class PlanRepository implements IPlanRepository
 
     public function getAllPlans(): Collection
     {
-        return Plan::with('workouts')->get();
+        return Plan::with('workouts', 'trainer')->get();
     }
 
     public function getPlanById(int $id): ?Plan
@@ -41,8 +41,6 @@ class PlanRepository implements IPlanRepository
     public function updatePlan(int $id, array $data): Plan
     {
         $plan = Plan::find($id);
-//        $plan->update($data);
-//        return $plan->load('workouts');
 
         DB::beginTransaction();
         try {
@@ -51,7 +49,7 @@ class PlanRepository implements IPlanRepository
             $plan->workouts()->sync($data['workouts']);
 
             DB::commit();
-            return $plan->load('workouts','trainer');
+            return $plan->load('workouts', 'trainer');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error('Plan could not be created', ['error' => $exception->getMessage()]);
