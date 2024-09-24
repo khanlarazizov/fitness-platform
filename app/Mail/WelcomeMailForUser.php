@@ -37,9 +37,9 @@ class WelcomeMailForUser extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.welcome-mail-for-user',
+            view: 'mail.welcome-mail-for-user',
             with: [
-                'user' => $this->user, // Pass the user data to the view
+                'user' => $this->user
             ]
         );
     }
