@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'phone_number' => $this->phone_number,
             'birth_date' => $this->birth_date,
-            'status' => $this->status->value,
+            'status' => $this->status,
             'weight' => $this->weight,
             'height' => $this->height,
             'image' => new ImageResource($this->whenLoaded('image')),
