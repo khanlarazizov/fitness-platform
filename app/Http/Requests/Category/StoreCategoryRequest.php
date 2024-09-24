@@ -23,7 +23,13 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:20', Rule::unique('categories', 'name')->whereNull('deleted_at')],
+            'name' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('categories', 'name')
+                    ->whereNull('deleted_at')
+            ],
         ];
     }
 }
