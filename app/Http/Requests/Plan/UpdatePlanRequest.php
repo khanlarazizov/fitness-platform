@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Plan;
 
+use App\Enums\StatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdatePlanRequest extends FormRequest
 {
@@ -23,9 +25,28 @@ class UpdatePlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:20', Rule::unique('plans', 'name')->ignore($this->plan, 'id')->whereNull('deleted_at')],
-            'workouts' => ['required', 'array'],
-            //todo users validation
+            'name' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('plans', 'name')
+                    ->ignore($this->plan, 'id')
+                    ->whereNull('deleted_at')
+            ],
+            'workouts' => [
+                'required',
+                'array',
+                Rule::exists('workouts', 'id')
+                    ->whereNull('deleted_at')
+            ],
+            'description' => [
+                'required',
+                'string'
+            ],
+            'status' => [
+                'required',
+                new Enum(StatusEnum::class)
+            ],
         ];
     }
 }
