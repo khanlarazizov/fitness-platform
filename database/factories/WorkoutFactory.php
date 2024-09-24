@@ -19,8 +19,9 @@ class WorkoutFactory extends Factory
     {
         $categories = Category::pluck('id')->toArray();
         return [
-            'name' => $this->faker->word(),
-            'category_id' => $this->faker->randomElement($categories),
+            'name' => fake()->word(),
+            'category_id' => fake()->randomElement($categories),
+            'description' => fake()->text(),
         ];
     }
 }
