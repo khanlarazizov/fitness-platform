@@ -14,7 +14,7 @@ class UserRepository implements IUserRepository
 {
     public function getAllUsers(): Collection
     {
-        return User::with('trainer', 'image')->get();
+        return User::with('trainer', 'image', 'roles')->get();
     }
 
     public function createUser(array $data): User
@@ -26,13 +26,13 @@ class UserRepository implements IUserRepository
             $file = isset($data['file']) ? UploadHelper::uploadFile($data['file']) : null;
 
             $user = User::create($data);
-            $user->assignRole('user');
+            $user->assignRole($data['role']);//todo check if role exists
 
             $user->image()->create(['name' => $file]);
 
             DB::commit();
 
-            return $user;
+            return $user->load('trainer', 'image', 'roles');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error('User could not be created', ['error' => $exception->getMessage()]);
@@ -42,12 +42,12 @@ class UserRepository implements IUserRepository
 
     public function getUserById(int $id): ?User
     {
-        return User::find($id)->load('trainer');
+        return User::find($id)->load('trainer', 'image', 'roles');
     }
 
     public function updateUser(int $id, array $data): bool
     {
-        $user = User::find($id)->load('trainer');
+        $user = User::find($id)->load('trainer', 'image', 'roles');
 
         if (!$user) {
             Log::error('User not found');
@@ -61,12 +61,11 @@ class UserRepository implements IUserRepository
 
             $file = isset($data['file']) ? UploadHelper::uploadFile($data['file']) : null;
             $user->update($data);
-
             $user->image()->update(['name' => $file]);
 
             DB::commit();
 
-            return $user;
+            return $user->load('trainer', 'image', 'roles');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error('User could not be updated', ['error' => $exception->getMessage()]);
