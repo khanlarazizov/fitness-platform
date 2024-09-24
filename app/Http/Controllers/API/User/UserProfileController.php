@@ -10,9 +10,9 @@ use App\Models\User;
 
 class UserProfileController extends Controller
 {
-    public function show(int $id)
+    public function show()
     {
-        if (auth()->user()->id !== $id) {
+        if (!auth()->user()) {
             return ResponseHelper::error(message: 'Profile not found');
         }
 
@@ -22,14 +22,13 @@ class UserProfileController extends Controller
         );
     }
 
-    public function update(int $id, UserProfileRequest $request)
+    public function update(UserProfileRequest $request)
     {
-        if (auth()->user()->id !== $id) {
+        if (!auth()->user()) {
             return ResponseHelper::error(message: 'Profile not found');
         }
 
-        $user = User::find($id);
-
+        $user = User::find(auth()->user()->id);
         $user->update($request->validated());
 
         return ResponseHelper::success(
