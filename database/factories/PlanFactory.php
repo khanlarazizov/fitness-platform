@@ -2,7 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Trainer;
+use App\Enums\StatusEnum;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,10 +18,12 @@ class PlanFactory extends Factory
      */
     public function definition(): array
     {
-        $trainers = Trainer::pluck('id')->toArray();
+        $trainers = User::query()->trainer()->pluck('id')->toArray();
         return [
             'name' => fake()->word(),
+            'description' => fake()->text(),
             'trainer_id' => fake()->randomElement($trainers),
+            'status' => fake()->randomElement(StatusEnum::cases())->value,
         ];
     }
 }
