@@ -1,72 +1,48 @@
 <?php
 
-use App\Http\Controllers\API\Admin\AdminProfileController;
 use App\Http\Controllers\API\CategoryController;
-use App\Http\Controllers\API\PlanController;
-use App\Http\Controllers\API\Trainer\TrainerProfileController;
+use App\Http\Controllers\API\Plan\AssignPlan;
+use App\Http\Controllers\API\Plan\PlanController;
 use App\Http\Controllers\API\User\UserController;
 use App\Http\Controllers\API\User\UserProfileController;
 use App\Http\Controllers\API\WorkoutController;
-use App\Http\Controllers\Auth\Admin\AdminLoginController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Auth\Trainer\TrainerLoginController;
-use App\Http\Controllers\Auth\User\RegisteredUserController;
-use App\Http\Controllers\Auth\User\UserLoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AssignPlanByTrainer;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\Trainer\TrainerController;
-use App\Http\Controllers\API\Admin\AdminController;
 
 Route::get('/', [UserController::class, 'index']);
 Route::prefix('auth')->group(function () {
-    Route::post('login', [UserLoginController::class, 'store']);
-    Route::post('logout', [UserLoginController::class, 'destroy'])->middleware('auth:sanctum');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
-
+    Route::post('login', LoginController::class);
+    Route::post('logout', LogoutController::class)->middleware('auth:sanctum');
+    Route::post('register', [RegisterController::class, 'store']);
     Route::post('forgot-password', [PasswordController::class, 'store']);
     Route::post('reset-password', [PasswordController::class, 'update'])->name('password.reset');
-
-    Route::prefix('admin')->controller(AdminLoginController::class)->group(function () {
-        Route::post('login', 'store');
-        Route::post('logout', 'destroy')->middleware('auth:sanctum');
-    });
-
-    Route::prefix('trainer')->controller(TrainerLoginController::class)->group(function () {
-        Route::post('login', 'store');
-        Route::post('logout', 'destroy')->middleware('auth:sanctum');
-    });
 });
 
-Route::middleware('auth:sanctum')
-    ->prefix('users/{user}')
-    ->controller(UserProfileController::class)
-    ->group(function () {
-        Route::get('profile', 'show');
-        Route::put('profile', 'update');
-    });
-
-Route::middleware(['auth:sanctum', 'role:trainer'])
-    ->prefix('trainers/{trainer}')
-    ->controller(TrainerProfileController::class)
-    ->group(function () {
-        Route::get('profile', 'show');
-        Route::put('profile', 'update');
-    });
-
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('trainers', TrainerController::class);
-    Route::apiResource('admins', AdminController::class);
-    Route::prefix('admins/{admin}/profile')
-        ->controller(AdminProfileController::class)
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('profile')
+        ->controller(UserProfileController::class)
         ->group(function () {
             Route::get('/', 'show');
             Route::put('/', 'update');
         });
-});
 
-Route::middleware(['auth:sanctum', 'admin_or_trainer'])->group(function () {
-    Route::apiResource('workouts', WorkoutController::class);
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('plans', PlanController::class);
+    Route::middleware('role:admin')->group(function () {
+        Route::apiResource('users', UserController::class);
+    });
+
+    Route::middleware('admin_or_trainer')->group(function () {
+        Route::apiResource('workouts', WorkoutController::class);
+        Route::apiResource('categories', CategoryController::class);
+        Route::apiResource('plans', PlanController::class);
+    });
+
+    Route::post('assign-plan/{plan}', [AssignPlan::class, 'store']);
+    Route::delete('cancel-plan/{plan}', [AssignPlan::class, 'destroy']);
+
+    Route::post('assign-plan-by-trainer/{plan}', [AssignPlanByTrainer::class, 'store']);
+    Route::delete('cancel-plan-by-trainer/{plan}', [AssignPlanByTrainer::class, 'destroy']);
 });
