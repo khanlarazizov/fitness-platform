@@ -37,7 +37,7 @@ class WelcomeMailForAdmin extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.welcome-mail-for-admin',
+            view: 'mail.welcome-mail-for-admin',
             with: [
                 'user' => $this->user
             ]
