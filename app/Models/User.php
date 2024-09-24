@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\GenderEnum;
+use App\Enums\RoleEnum;
 use App\Enums\StatusEnum;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,6 +57,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'status' => StatusEnum::class,
             'gender' => GenderEnum::class,
+            'role' => RoleEnum::class,
         ];
     }
 
