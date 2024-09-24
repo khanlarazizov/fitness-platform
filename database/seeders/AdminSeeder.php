@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\StatusEnum;
 use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,16 +18,22 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = Admin::create([
+        $admin = User::factory()->create([
             'name' => 'admin',
             'surname' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('adminadmin'),
+            'phone_number' => null,
+            'gender' => null,
+            'birth_date' => null,
+            'status' => StatusEnum::ACTIVE->value,
+            'weight' => null,
+            'height' => null,
         ]);
 
         $admin->assignRole('admin');
-        $role = Role::findByName('admin', 'admin-api');
-        $adminPermissions = Permission::where('guard_name', 'admin-api')->get();
-        $role->syncPermissions($adminPermissions);
+        $role = Role::find(1);
+        $permissions = Permission::all();
+        $role->syncPermissions($permissions);
     }
 }
