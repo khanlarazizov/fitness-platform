@@ -8,7 +8,8 @@ use App\Http\Requests\Workout\StoreWorkoutRequest;
 use App\Http\Requests\Workout\UpdateWorkoutRequest;
 use App\Http\Resources\WorkoutResource;
 use App\Lib\Interfaces\IWorkoutRepository;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 
 class WorkoutController extends Controller
 {
@@ -16,80 +17,68 @@ class WorkoutController extends Controller
     {
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $workouts = $this->workoutRepository->getAllWorkouts();
-        if (!$workouts) {
-            return ResponseHelper::error(message: 'Workouts could not found');
+        try {
+            $workouts = $this->workoutRepository->getAllWorkouts();
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(message: $exception->getMessage());
         }
-        return ResponseHelper::success(
-            message: 'Workouts found successfully',
-            data: WorkoutResource::collection($workouts)
-        );
+        return ResponseHelper::success(data: WorkoutResource::collection($workouts));
     }
 
-    public function store(StoreWorkoutRequest $request)
+    public function store(StoreWorkoutRequest $request): JsonResponse
     {
         try {
             $workout = $this->workoutRepository->createWorkout($request->validated());
         } catch (\Exception $exception) {
-            Log::error('Workout could not be created', ['error' => $exception->getMessage()]);
             return ResponseHelper::error(
-                message: 'Workout could not be created',
+                message: $exception->getMessage(),
                 statusCode: 400
             );
         }
 
-        return ResponseHelper::success(
-            message: 'Workout created successfully',
-            data: WorkoutResource::make($workout),
-            statusCode: 201
-        );
+        return ResponseHelper::success(data: WorkoutResource::make($workout), statusCode: 201);
     }
 
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
-        $workout = $this->workoutRepository->getWorkoutById($id);
-        if (!$workout) {
-            return ResponseHelper::error(message: 'Workout could not found');
-        }
-
-        return ResponseHelper::success(
-            message: 'Workout found successfully',
-            data: WorkoutResource::make($workout)
-        );
-    }
-
-    public function update(int $id, UpdateWorkoutRequest $request)
-    {
-        $workout = $this->workoutRepository->getWorkoutById($id);
-        if (!$workout) {
-            return ResponseHelper::error(message: 'Workout could not found');
-        }
-
         try {
-            $this->workoutRepository->updateWorkout($id, $request->validated());
-        } catch (\Exception $exception) {
-            Log::error('Workout could not be updated', ['error' => $exception->getMessage()]);
+            $workout = $this->workoutRepository->getWorkoutById($id);
+        } catch (ModelNotFoundException $exception) {
             return ResponseHelper::error(
-                message: 'Workout could not be updated',
+                message: $exception->getMessage(),
+            );
+        }
+
+        return ResponseHelper::success(data: WorkoutResource::make($workout));
+    }
+
+    public function update(int $id, UpdateWorkoutRequest $request): JsonResponse
+    {
+        try {
+            $workout = $this->workoutRepository->updateWorkout($id, $request->validated());
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage(),
                 statusCode: 400
             );
         }
 
-        return ResponseHelper::success(
-            message: 'Workout updated successfully',
-            data: WorkoutResource::make($workout)
-        );
+        return ResponseHelper::success(data: WorkoutResource::make($workout));
     }
 
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
-        $workout = $this->workoutRepository->getWorkoutById($id);
-        if (!$workout) {
-            return ResponseHelper::error(message: 'Workout could not found');
+        try {
+            $this->workoutRepository->deleteWorkout($id);
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage(),
+                statusCode: 400
+            );
         }
 
-        $this->workoutRepository->deleteWorkout($id);
+        return ResponseHelper::success();
     }
 }
