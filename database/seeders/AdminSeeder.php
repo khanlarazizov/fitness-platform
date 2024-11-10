@@ -2,14 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Enums\RoleEnum;
 use App\Enums\StatusEnum;
-use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
 {
@@ -31,9 +29,6 @@ class AdminSeeder extends Seeder
             'height' => null,
         ]);
 
-        $admin->assignRole('admin');
-        $role = Role::find(1);
-        $permissions = Permission::all();
-        $role->syncPermissions($permissions);
+        $admin->assignRole(RoleEnum::ADMIN->value);
     }
 }
