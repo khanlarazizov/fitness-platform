@@ -6,34 +6,29 @@ use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserProfileRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class UserProfileController extends Controller
 {
-    public function show()
+    public function show(): JsonResponse
     {
-        if (!auth()->user()) {
-            return ResponseHelper::error(message: 'Profile not found');
+        $user = auth()->user();
+        if (!$user) {
+            return ResponseHelper::error();
         }
 
-        return ResponseHelper::success(
-            message: 'Profile found successfully',
-            data: UserResource::make(auth()->user())
-        );
+        return ResponseHelper::success(data: UserResource::make($user));
     }
 
-    public function update(UserProfileRequest $request)
+    public function update(UserProfileRequest $request): JsonResponse
     {
-        if (!auth()->user()) {
-            return ResponseHelper::error(message: 'Profile not found');
+        $user = auth()->user();
+        if (!$user) {
+            return ResponseHelper::error();
         }
 
-        $user = User::find(auth()->user()->id);
         $user->update($request->validated());
 
-        return ResponseHelper::success(
-            message: 'Profile updated successfully',
-            data: UserResource::make($user)
-        );
+        return ResponseHelper::success(data: UserResource::make($user));
     }
 }

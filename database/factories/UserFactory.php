@@ -6,6 +6,7 @@ use App\Enums\GenderEnum;
 use App\Enums\StatusEnum;
 use App\Models\Trainer;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -45,6 +46,8 @@ class UserFactory extends Factory
 //            'file' => fake()->image(storage_path('images'), 50, 50)
             'email_verified_at' => now(),
             'about' => fake()->text(),
+            'ideal_weight' => fake()->numberBetween(40, 150),
+            'target_weight' => fake()->numberBetween(40, 150),
         ];
     }
 

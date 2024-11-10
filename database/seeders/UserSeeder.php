@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\GenderEnum;
+use App\Enums\RoleEnum;
 use App\Enums\StatusEnum;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,7 +22,7 @@ class UserSeeder extends Seeder
         $users = User::factory(100)->create();
 
         $users->each(
-            fn($user) => $user->assignRole('user')
+            fn($user) => $user->assignRole(RoleEnum::USER->value)
         );
 
         $user = User::create([
@@ -35,8 +36,10 @@ class UserSeeder extends Seeder
             'height' => 180,
             'birth_date' => '1995-01-01',
             'status' => StatusEnum::ACTIVE->value,
+            'ideal_weight' => 80,
+            'target_weight' => 85,
         ]);
 
-        $user->assignRole('user');
+        $user->assignRole(RoleEnum::USER->value);
     }
 }

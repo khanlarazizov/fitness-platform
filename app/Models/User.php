@@ -10,6 +10,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -73,7 +74,12 @@ class User extends Authenticatable
 
     public function trainer(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'trainer_id');
+    }
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(User::class, 'trainer_id');
     }
 
     public function image(): MorphOne
@@ -86,8 +92,14 @@ class User extends Authenticatable
         return $query->whereHas('roles', fn($query) => $query->where('name', 'trainer'));
     }
 
+
     public function plans(): BelongsToMany
     {
         return $this->belongsToMany(Plan::class, 'plan_user');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
     }
 }

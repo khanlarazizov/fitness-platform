@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User;
 
+use App\Enums\GenderEnum;
 use App\Enums\RoleEnum;
 use App\Enums\StatusEnum;
 use Illuminate\Contracts\Validation\Validator;
@@ -35,13 +36,17 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'email', Rule::unique('users', 'email')->whereNull('deleted_at')],
             'password' => ['required', 'confirmed', Password::min(6)->max(20)->numbers()],
             'status' => ['sometimes', new Enum(StatusEnum::class)],
+            'gender' => ['required_unless:role,' . RoleEnum::ADMIN->value, new Enum(GenderEnum::class)],
             'trainer_id' => ['sometimes', Rule::exists('users', 'id')],
-            'file' => ['required_if,role,' . RoleEnum::TRAINER->value, 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'birth_date' => ['required_unless:role,' . RoleEnum::ADMIN->value, 'date'],
+            'file' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
             'role' => ['required', new Enum(RoleEnum::class)],
-            'phone_number' => ['required_unless:role,admin', 'regex:/^(\+994|994|0)(50|51|55|60|70|77)\d{7}$/', 'min:9', 'max:15', Rule::unique('users', 'phone_number')->whereNull('deleted_at')],
+            'phone_number' => ['required_unless:role,' . RoleEnum::ADMIN->value, 'regex:/^(\+994|994|0)(50|51|55|60|70|77)\d{7}$/', 'min:9', 'max:15', Rule::unique('users', 'phone_number')->whereNull('deleted_at')],
             'weight' => ['required_unless:role,' . RoleEnum::ADMIN->value, 'numeric'],
             'height' => ['required_unless:role,' . RoleEnum::ADMIN->value, 'numeric'],
             'about' => ['required_if:role,' . RoleEnum::TRAINER->value, 'string'],
+            'ideal_weight' => ['required_if:role,' . RoleEnum::USER->value, 'numeric'],
+            'target_weight' => ['required_if:role,' . RoleEnum::USER->value, 'numeric'],
         ];
     }
 }

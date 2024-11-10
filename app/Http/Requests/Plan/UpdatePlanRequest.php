@@ -44,7 +44,7 @@ class UpdatePlanRequest extends FormRequest
                 'string'
             ],
             'status' => [
-                'required',
+                'sometimes',
                 new Enum(StatusEnum::class)
             ],
         ];

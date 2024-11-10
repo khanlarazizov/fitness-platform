@@ -25,12 +25,19 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'weight' => $this->weight,
             'height' => $this->height,
-            'image' => new ImageResource($this->whenLoaded('image')),
-            'trainer' => new UserResource($this->whenLoaded('trainer')),
-            'roles' => $this->roles->pluck('name')->toArray() ?? [],
-            'permissions' => $this->permissions->pluck('name')->toArray() ?? [],
+            'about' => $this->about,
+            'image' => ImageResource::make($this->whenLoaded('image')),
+            'trainer' => UserResource::make($this->whenLoaded('trainer')),
+            'roles' => $this->roles->map(function ($role) {
+                return [
+                    'role_name' => $role->name,
+                    'permissions' => $role->permissions->pluck('name')->toArray(),
+                ];
+            })->toArray(),
             'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString()
+            'updated_at' => $this->updated_at->toDateTimeString(),
+            'target_weight' => $this->target_weight,
+            'ideal_weight' => $this->ideal_weight
         ];
     }
 }
