@@ -15,5 +15,5 @@ interface IPlanRepository
 
     public function updatePlan(int $id, array $data): Plan;
 
-    public function deletePlan(int $id);
+    public function deletePlan(int $id): void;
 }
