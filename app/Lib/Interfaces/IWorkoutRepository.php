@@ -15,5 +15,5 @@ interface IWorkoutRepository
 
     public function updateWorkout(int $id, array $data): Workout;
 
-    public function deleteWorkout(int $id);
+    public function deleteWorkout(int $id): void;
 }
