@@ -15,5 +15,5 @@ interface ICategoryRepository
 
     public function updateCategory(int $id, array $data): Category;
 
-    public function deleteCategory(int $id);
+    public function deleteCategory(int $id): void;
 }
