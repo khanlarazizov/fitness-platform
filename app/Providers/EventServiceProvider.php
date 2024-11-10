@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\PlanAssigned;
 use App\Events\UserRegistered;
+use App\Listeners\SendAssignedPlanMailForUser;
 use App\Listeners\SendWelcomeMailForUser;
 use App\Listeners\SendWelcomeMailForAdmin;
 use Illuminate\Support\ServiceProvider;
@@ -14,6 +16,9 @@ class EventServiceProvider extends ServiceProvider
             SendWelcomeMailForUser::class,
             SendWelcomeMailForAdmin::class
         ],
+        PlanAssigned::class => [
+            SendAssignedPlanMailForUser::class
+        ]
     ];
 
     /**
