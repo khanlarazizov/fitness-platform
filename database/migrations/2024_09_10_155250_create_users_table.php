@@ -28,6 +28,8 @@ return new class extends Migration {
             $table->integer('weight')->nullable();
             $table->integer('height')->nullable();
             $table->text('about')->nullable();
+            $table->integer('ideal_weight')->nullable();
+            $table->integer('target_weight')->nullable();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
