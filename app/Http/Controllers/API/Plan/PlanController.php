@@ -8,7 +8,7 @@ use App\Http\Requests\Plan\StorePlanRequest;
 use App\Http\Requests\Plan\UpdatePlanRequest;
 use App\Http\Resources\PlanResource;
 use App\Lib\Interfaces\IPlanRepository;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 
 class PlanController extends Controller
 {
@@ -16,80 +16,70 @@ class PlanController extends Controller
     {
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $plans = $this->planRepository->getAllPlans();
-        if (!$plans) {
-            return ResponseHelper::error(message: 'Plans could not found');
+        try {
+            $plans = $this->planRepository->getAllPlans();
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(message: $exception->getMessage());
         }
 
-        return ResponseHelper::success(
-            message: 'Plans found successfully',
-            data: PlanResource::collection($plans)
-        );
+        return ResponseHelper::success(data: PlanResource::collection($plans));
     }
 
-    public function store(StorePlanRequest $request)
+    public function store(StorePlanRequest $request): JsonResponse
     {
         try {
             $plan = $this->planRepository->createPlan($request->validated());
         } catch (\Exception $exception) {
-            Log::error('Plan could not be created', ['error' => $exception->getMessage()]);
             return ResponseHelper::error(
-                message: 'Plan could not be created',
+                message: $exception->getMessage(),
                 statusCode: 400
             );
         }
 
-        return ResponseHelper::success(
-            message: 'Plan created successfully',
-            data: PlanResource::make($plan)
-        );
+        return ResponseHelper::success(data: PlanResource::make($plan));
     }
 
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
-        $plan = $this->planRepository->getPlanById($id);
-        if (!$plan) {
-            return ResponseHelper::error(message: 'Plan could not found');
+        try {
+            $plan = $this->planRepository->getPlanById($id);
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage(),
+                statusCode: 400
+            );
         }
 
-        return ResponseHelper::success(
-            message: 'Plan found successfully',
-            data: PlanResource::make($plan)
-        );
+        return ResponseHelper::success(data: PlanResource::make($plan));
     }
 
-    public function update(int $id, UpdatePlanRequest $request)
+    public function update(int $id, UpdatePlanRequest $request): JsonResponse
     {
-        $plan = $this->planRepository->getPlanById($id);
-
-        if (!$plan) {
-            return ResponseHelper::error(message: 'Plan could not found');
-        }
-
         try {
             $plan = $this->planRepository->updatePlan($id, $request->validated());
         } catch (\Exception $exception) {
-            Log::error('Plan could not be updated', ['error' => $exception->getMessage()]);
             return ResponseHelper::error(
-                message: 'Plan could not be updated',
+                message: $exception->getMessage(),
                 statusCode: 400
             );
         }
 
-        return ResponseHelper::success(
-            message: 'Plan updated successfully',
-            data: PlanResource::make($plan)
-        );
+        return ResponseHelper::success(data: PlanResource::make($plan));
     }
 
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
-        $plan = $this->planRepository->getPlanById($id);
-        if (!$plan) {
-            return ResponseHelper::error(message: 'Plan could not found');
+        try {
+            $this->planRepository->deletePlan($id);
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage(),
+                statusCode: 400
+            );
         }
-        $this->planRepository->deletePlan($id);
+
+        return ResponseHelper::success();
     }
 }

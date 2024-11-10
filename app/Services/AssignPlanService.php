@@ -3,14 +3,12 @@
 namespace App\Services;
 
 use App\Events\PlanAssigned;
-use App\Helpers\ResponseHelper;
-use App\Http\Requests\Plan\AssignPlanRequest;
 use App\Models\Plan;
 use App\Models\User;
 
 class AssignPlanService
 {
-    public function assignPlanByTrainer(Plan $plan, $request)
+    public function assignPlan(Plan $plan, $request)
     {
         $users = $request->users;
         collect($users)->each(function ($userId) use ($plan) {
@@ -26,7 +24,7 @@ class AssignPlanService
         });
     }
 
-    public function cancelPlanByTrainer(Plan $plan, $request)
+    public function cancelPlan(Plan $plan, $request)
     {
         $users = $request->users;
         collect($users)->each(function ($userId) use ($plan) {
