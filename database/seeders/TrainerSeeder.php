@@ -3,15 +3,11 @@
 namespace Database\Seeders;
 
 use App\Enums\GenderEnum;
-use App\Enums\PermissionEnum;
+use App\Enums\RoleEnum;
 use App\Enums\StatusEnum;
-use App\Models\Trainer;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class TrainerSeeder extends Seeder
 {
@@ -22,17 +18,8 @@ class TrainerSeeder extends Seeder
     {
         $trainer = User::factory(30)->create();
 
-        $role = Role::find(2);
-        $permissions = Permission::whereIn('name',
-            [
-                PermissionEnum::MANAGE_WORKOUTS->label(),
-                PermissionEnum::MANAGE_CATEGORIES->label(),
-                PermissionEnum::MANAGE_PLANS->label(),
-            ]);
-        $role->syncPermissions($permissions);
-
         $trainer->each(
-            fn($trainer) => $trainer->assignRole('trainer')
+            fn($trainer) => $trainer->assignRole(RoleEnum::TRAINER->value)
         );
 
         $trainer2 = User::create([
@@ -45,6 +32,6 @@ class TrainerSeeder extends Seeder
             'birth_date' => '1990-01-01',
             'status' => StatusEnum::ACTIVE->value,
         ]);
-        $trainer2->assignRole('trainer');
+        $trainer2->assignRole(RoleEnum::TRAINER->value);
     }
 }
