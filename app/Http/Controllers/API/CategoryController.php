@@ -8,7 +8,7 @@ use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Lib\Interfaces\ICategoryRepository;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
@@ -16,79 +16,71 @@ class CategoryController extends Controller
     {
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $categories = $this->categoryRepository->getAllCategories();
-        if (!$categories) {
-            return ResponseHelper::error(message: 'Categories could not found');
+        try {
+            $categories = $this->categoryRepository->getAllCategories();
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage()
+            );
         }
-        return ResponseHelper::success(
-            message: 'Categories found successfully',
-            data: CategoryResource::collection($categories)
-        );
+
+        return ResponseHelper::success(data: CategoryResource::collection($categories));
     }
 
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
         try {
             $category = $this->categoryRepository->createCategory($request->validated());
         } catch (\Exception $exception) {
-            Log::error('Category could not be created', ['error' => $exception->getMessage()]);
             return ResponseHelper::error(
-                message: 'Category could not be created',
+                message: $exception->getMessage(),
                 statusCode: 400
             );
         }
 
-        return ResponseHelper::success(
-            message: 'Category created successfully',
-            data: CategoryResource::make($category)
-        );
+        return ResponseHelper::success(data: CategoryResource::make($category));
     }
 
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
-        $category = $this->categoryRepository->getCategoryById($id);
-        if (!$category) {
-            return ResponseHelper::error(message: 'Category could not found');
+        try {
+            $category = $this->categoryRepository->getCategoryById($id);
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage(),
+                statusCode: 400
+            );
         }
-        return ResponseHelper::success(
-            message: 'Category found successfully',
-            data: CategoryResource::make($category)
-        );
+
+        return ResponseHelper::success(data: CategoryResource::make($category));
     }
 
-    public function update(int $id, UpdateCategoryRequest $request)
+    public function update(int $id, UpdateCategoryRequest $request): JsonResponse
     {
-        $category = $this->categoryRepository->getCategoryById($id);
-
-        if (!$category) {
-            return ResponseHelper::error(message: 'Category could not found');
-        }
-
         try {
             $category = $this->categoryRepository->updateCategory($id, $request->validated());
         } catch (\Exception $exception) {
-            Log::error('Category could not be updated', ['error' => $exception->getMessage()]);
             return ResponseHelper::error(
-                message: 'Category could not be updated',
+                message: $exception->getMessage(),
                 statusCode: 400);
         }
-        return ResponseHelper::success(
-            message: 'Category updated successfully',
-            data: CategoryResource::make($category)
-        );
+
+        return ResponseHelper::success(data: CategoryResource::make($category));
     }
 
-
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
-        $category = $this->categoryRepository->getCategoryById($id);
-
-        if (!$category) {
-            return ResponseHelper::error(message: 'Category could not found');
+        try {
+            $this->categoryRepository->deleteCategory($id);
+        } catch (\Exception $exception) {
+            return ResponseHelper::error(
+                message: $exception->getMessage(),
+                statusCode: 400
+            );
         }
 
-        $this->categoryRepository->deleteCategory($id);
+        return ResponseHelper::success();
     }
 }
