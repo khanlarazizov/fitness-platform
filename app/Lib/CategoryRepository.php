@@ -5,16 +5,19 @@ namespace App\Lib;
 use App\Lib\Interfaces\ICategoryRepository;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CategoryRepository implements ICategoryRepository
 {
-
-    public function getAllCategories(): Collection
+    public function getAllCategories(array $data): LengthAwarePaginator
     {
-        return Category::with('workouts')->get();
+        return Category::query()
+            ->with('workouts')
+            ->name($data['name'])
+            ->sortBy($data['sort_by'], $data['direction'])
+            ->paginate(10);
     }
 
     public function getCategoryById(int $id): ?Category
