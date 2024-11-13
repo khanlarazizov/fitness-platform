@@ -36,7 +36,7 @@ class WelcomeNewUser extends Notification
         return (new MailMessage)
             ->greeting('Hello ' . $this->user->name)
             ->line('The introduction to the notification.')
-            ->action('Your Profile', url('/' . $this->user->slug))
+            ->action('Your Profile', url('/profile'))
             ->line('Thank you for using our application!');
     }
 
