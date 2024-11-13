@@ -12,7 +12,6 @@ class TrainerExists implements ValidationRule
     {
         $exists = User::query()->trainer()->where('id', $value)->exists();
 
-        // If no such trainer exists, invoke the fail callback with a custom message.
         if (!$exists) {
             $fail('The selected ' . $attribute . ' is invalid or the user is not a trainer.');
         }
