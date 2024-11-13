@@ -5,17 +5,21 @@ namespace App\Lib;
 use App\Lib\Interfaces\IPlanRepository;
 use App\Models\Plan;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PlanRepository implements IPlanRepository
 {
-    public function getAllPlans(): Collection
+    public function getAllPlans(array $data): LengthAwarePaginator
     {
         return Plan::with('workouts', 'trainer')
+            ->name($data['name'])
+            ->sortBy($data['sort_by'], $data['direction'])
+            ->status($data['status'])
+            ->trainer($data['trainer_id'])
             ->withCount('users', 'workouts')
-            ->get();
+            ->paginate(10);
     }
 
     public function getPlanById(int $id): ?Plan

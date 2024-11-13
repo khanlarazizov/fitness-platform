@@ -3,11 +3,12 @@
 namespace App\Lib\Interfaces;
 
 use App\Models\Plan;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 interface IPlanRepository
 {
-    public function getAllPlans(): Collection;
+    public function getAllPlans(array $data): LengthAwarePaginator;
 
     public function getPlanById(int $id): ?Plan;
 
