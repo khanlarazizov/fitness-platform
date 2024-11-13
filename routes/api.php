@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts');
 });
+//Route::apiResource('categories', CategoryController::class);
 
 Route::prefix('auth')->group(function () {
     Route::post('login', LoginController::class);
