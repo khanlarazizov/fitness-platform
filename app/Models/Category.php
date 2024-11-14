@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DirectionEnum;
+use App\Models\Scopes\SortByScope;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,17 +28,15 @@ class Category extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new SortByScope('created_at', DirectionEnum::ASC->value));
+    }
+
     public function scopeName(Builder $query, $name)
     {
         if (!is_null($name)) {
             return $query->where('name', 'like', '%' . $name . '%');
-        }
-    }
-
-    public function scopeSortBy(Builder $query, $sortBy, $direction = DirectionEnum::ASC->value)
-    {
-        if (in_array($sortBy, ['name', 'created_at']) && in_array($direction, array_column(DirectionEnum::cases(), 'value'))) {
-            return $query->orderBy($sortBy, $direction);
         }
     }
 
