@@ -37,7 +37,7 @@ class SearchUserRequest extends FormRequest
             'start_weight' => ['nullable', 'numeric'],
             'end_weight' => ['nullable', 'numeric'],
             'direction' => ['nullable', new Enum(DirectionEnum::class)],
-            'sort_by' => ['nullable', 'string', 'max:25'],
+            'sort_by' => ['nullable', 'in:name,surname,status,gender,weight,height,created_at'],
         ];
     }
 }
