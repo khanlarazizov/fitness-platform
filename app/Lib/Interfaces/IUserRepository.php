@@ -3,11 +3,11 @@
 namespace App\Lib\Interfaces;
 
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface IUserRepository
 {
-    public function getAllUsers(): Collection;
+    public function getAllUsers(array $data): LengthAwarePaginator;
 
     public function createUser(array $data): User;
 

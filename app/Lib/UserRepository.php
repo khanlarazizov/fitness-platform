@@ -7,6 +7,7 @@ use App\Helpers\UploadHelper;
 use App\Lib\Interfaces\IUserRepository;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,9 +15,20 @@ use Illuminate\Support\Facades\Log;
 
 class UserRepository implements IUserRepository
 {
-    public function getAllUsers(): Collection
+    public function getAllUsers(array $data): LengthAwarePaginator
     {
-        return User::with('trainer', 'image', 'roles','permissions')->get();
+        return User::with('trainer', 'image', 'roles', 'permissions')
+            ->name($data['name'])
+            ->surname($data['surname'])
+            ->gender($data['gender'])
+            ->phoneNumber($data['phone_number'])
+            ->birthdayBetween($data['start_date'], $data['end_date'])
+            ->status($data['status'])
+            ->trainer($data['trainer_id'])
+            ->weightBetween($data['start_weight'], $data['end_weight'])
+            ->heightBetween($data['start_height'], $data['end_height'])
+            ->sortBy($data['sort_by'], $data['direction'])
+            ->paginate(10);
     }
 
     public function createUser(array $data): User

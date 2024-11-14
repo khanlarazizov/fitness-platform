@@ -28,7 +28,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $trainers = User::query()->trainer()->pluck('id')->toArray();
+        $trainers = User::query()->allTrainers()->pluck('id')->toArray();
 
         return [
             'name' => fake()->name(),
